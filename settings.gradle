@@ -1,0 +1,2 @@
+rootProject.name = "AtmApp"
+include ':app'
