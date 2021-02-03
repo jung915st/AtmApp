@@ -1,10 +1,12 @@
 package com.example.atmapp;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
@@ -13,17 +15,22 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.atmapp.databinding.ActivityMainBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_LOGIN = 100;
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     boolean logon = false;
+    String[] functions = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +38,10 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        if(!logon){
-            Intent intent = new Intent(this,LoginActivity.class);
-            startActivity(intent);
+        if (!logon) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            //startActivity(intent);
+            startActivityForResult(intent, REQUEST_LOGIN);
         }
 
         setSupportActionBar(binding.toolbar);
@@ -49,6 +57,32 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        //Recycler
+        RecyclerView recyclerView = findViewById(R.id.recycler);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //Adapter
+        //functions = getResources().getStringArray(R.array.functions);
+        FunctionAdapter adapter = new FunctionAdapter(this);
+
+        recyclerView.setAdapter(adapter);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_LOGIN) {
+            if (resultCode != RESULT_OK) {
+                finish();
+            } else {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("LOGIN RESULT")
+                        .setMessage("LOGIN FAILED")
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
+        }
     }
 
     @Override
